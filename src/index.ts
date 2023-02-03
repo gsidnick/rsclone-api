@@ -2,6 +2,7 @@ import express, { Application, Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
+import libraryRoutes from './routes/library-routes';
 
 dotenv.config();
 
@@ -20,10 +21,7 @@ const PORT: number = Number(process.env.PORT) || 5000;
 })();
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
-app.use('/', (req: Request, res: Response, next: NextFunction) => {
-  res.send({ data: 'Server answer' });
-  next();
-});
+app.use(libraryRoutes);
 
 app.listen(PORT, 'localhost', () => {
   console.log(`Listening port ${PORT}...`);
