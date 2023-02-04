@@ -1,7 +1,8 @@
-import express, { Application, Request, Response, NextFunction } from 'express';
+import express, { Application } from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
+import wordRoutes from './routes/word-routes';
 
 dotenv.config();
 
@@ -19,11 +20,10 @@ const PORT: number = Number(process.env.PORT) || 5000;
   }
 })();
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
-app.use('/', (req: Request, res: Response, next: NextFunction) => {
-  res.send({ data: 'Server answer' });
-  next();
-});
+app.use(wordRoutes);
 
 app.listen(PORT, 'localhost', () => {
   console.log(`Listening port ${PORT}...`);
