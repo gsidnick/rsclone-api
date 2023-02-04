@@ -2,7 +2,7 @@ import express, { Application, Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
-import libraryRoutes from './routes/library-routes';
+import wordRoutes from './routes/word-routes';
 
 dotenv.config();
 
@@ -21,7 +21,7 @@ const PORT: number = Number(process.env.PORT) || 5000;
 })();
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
-app.use(libraryRoutes);
+app.use(wordRoutes);
 
 app.listen(PORT, 'localhost', () => {
   console.log(`Listening port ${PORT}...`);
