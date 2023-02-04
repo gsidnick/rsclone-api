@@ -20,6 +20,8 @@ const PORT: number = Number(process.env.PORT) || 5000;
   }
 })();
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 app.use(wordRoutes);
 
