@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import Word from '../models/word';
+import Word from '../models/word-model';
 
 export function getWords(req: Request, res: Response) {
   Word.find()

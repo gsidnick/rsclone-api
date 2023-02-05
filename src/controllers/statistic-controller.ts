@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import Statistic from '../models/statistic';
+import Statistic from '../models/statistic-model';
 
 export function getStatistics(req: Request, res: Response) {
   Statistic.find()
