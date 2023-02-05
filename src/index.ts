@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
 import wordRoutes from './routes/word-routes';
+import statisticRoutes from './routes/statistic-routes';
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 app.use(wordRoutes);
+app.use(statisticRoutes);
 
 app.listen(PORT, 'localhost', () => {
   console.log(`Listening port ${PORT}...`);
