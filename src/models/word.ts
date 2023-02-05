@@ -10,7 +10,7 @@ const wordSchema = new Schema({
     type: String,
     required: true,
   },
-  knowledgeLevel: {
+  learn: {
     type: Number,
     default: 0,
   },

@@ -14,8 +14,8 @@ export function getWord(req: Request, res: Response) {
 }
 
 export function addWord(req: Request, res: Response) {
-  const { word, translation, knowledgeLevel } = req.body;
-  const newWord = new Word({ word, translation, knowledgeLevel });
+  const { word, translation, learn } = req.body;
+  const newWord = new Word({ word, translation, learn });
   newWord
     .save()
     .then((word) => res.status(201).json(word))
@@ -23,9 +23,9 @@ export function addWord(req: Request, res: Response) {
 }
 
 export function editWord(req: Request, res: Response) {
-  const { word, translation, knowledgeLevel } = req.body;
+  const { word, translation, learn } = req.body;
   const { id } = req.params;
-  Word.findByIdAndUpdate(id, { word, translation, knowledgeLevel }, { new: true })
+  Word.findByIdAndUpdate(id, { word, translation, learn }, { new: true })
     .then((word) => res.status(200).json(word))
     .catch((error) => res.status(500).send(error.message));
 }
