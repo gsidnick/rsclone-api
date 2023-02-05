@@ -1,19 +1,24 @@
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
-const wordSchema = new Schema({
-  word: {
-    type: String,
-    required: true,
+const wordSchema = new Schema(
+  {
+    word: {
+      type: String,
+      required: true,
+    },
+    translation: {
+      type: String,
+      required: true,
+    },
+    learn: {
+      type: Number,
+      default: 0,
+    },
   },
-  translation: {
-    type: String,
-    required: true,
+  {
+    strictQuery: true,
   },
-  knowledgeLevel: {
-    type: Number,
-    default: 0,
-  },
-});
+);
 
 export default mongoose.model('Word', wordSchema);
