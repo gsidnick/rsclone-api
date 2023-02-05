@@ -2,6 +2,7 @@ import express, { Application } from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
+import cors from 'cors';
 import wordRoutes from './routes/word-routes';
 import statisticRoutes from './routes/statistic-routes';
 
@@ -21,6 +22,12 @@ const PORT: number = Number(process.env.PORT) || 5000;
   }
 })();
 
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+    optionsSuccessStatus: 200,
+  }),
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
