@@ -6,6 +6,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import wordRouter from './routers/WordRouter';
 import statisticRouter from './routers/StatisticRouter';
+import userRouter from './routers/UserRouter';
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 app.use(wordRouter);
 app.use(statisticRouter);
+app.use(userRouter);
 
 (async () => {
   try {
