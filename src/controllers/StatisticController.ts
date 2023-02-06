@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import Statistic from '../models/statistic-model';
+import Statistic from '../models/StatisticModel';
 
 class StatisticController {
   async getStatistics(req: Request, res: Response) {

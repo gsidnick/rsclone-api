@@ -4,8 +4,8 @@ import mongoose from 'mongoose';
 import morgan from 'morgan';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import wordRoutes from './routes/word-routes';
-import statisticRoutes from './routes/statistic-routes';
+import wordRouter from './routers/WordRouter';
+import statisticRouter from './routers/StatisticRouter';
 
 dotenv.config();
 
@@ -23,8 +23,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
-app.use(wordRoutes);
-app.use(statisticRoutes);
+app.use(wordRouter);
+app.use(statisticRouter);
 
 (async () => {
   try {

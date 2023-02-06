@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import translate from 'google-translate-api-x';
-import Word from '../models/word-model';
+import Word from '../models/WordModel';
 
 class WordController {
   async getWords(req: Request, res: Response) {
