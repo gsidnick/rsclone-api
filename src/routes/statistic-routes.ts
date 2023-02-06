@@ -1,18 +1,12 @@
 import express from 'express';
-import {
-  getStatistics,
-  addStatistic,
-  getStatistic,
-  editStatistic,
-  deleteStatistic,
-} from '../controllers/statistic-controller';
+import statisticController from '../controllers/statistic-controller';
 
 const router = express.Router();
 
-router.get('/api/statistics', getStatistics);
-router.post('/api/statistic', addStatistic);
-router.get('/api/statistic/:id', getStatistic);
-router.put('/api/statistic/:id', editStatistic);
-router.delete('/api/statistic/:id', deleteStatistic);
+router.get('/api/statistics', statisticController.getStatistics);
+router.post('/api/statistic', statisticController.addStatistic);
+router.get('/api/statistic/:id', statisticController.getStatistic);
+router.put('/api/statistic/:id', statisticController.editStatistic);
+router.delete('/api/statistic/:id', statisticController.deleteStatistic);
 
 export default router;
