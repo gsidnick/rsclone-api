@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import translate from 'google-translate-api-x';
 import Word from '../models/word-model';
 
 export function getWords(req: Request, res: Response) {
@@ -13,9 +14,14 @@ export function getWord(req: Request, res: Response) {
     .catch((error) => res.status(500).send(error.message));
 }
 
-export function addWord(req: Request, res: Response) {
-  const { word, translation, learn } = req.body;
-  const newWord = new Word({ word, translation, learn });
+export async function addWord(req: Request, res: Response) {
+  const { word } = req.body;
+  let translation = '';
+  const result = await translate(word, { to: 'ru' });
+  if ('text' in result) {
+    translation = String(result.text);
+  }
+  const newWord = new Word({ word, translation });
   newWord
     .save()
     .then((word) => res.status(201).json(word))
