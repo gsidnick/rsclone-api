@@ -2,8 +2,11 @@ import express, { Application } from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
-import wordRoutes from './routes/word-routes';
-import statisticRoutes from './routes/statistic-routes';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import wordRouter from './routers/WordRouter';
+import statisticRouter from './routers/StatisticRouter';
+import userRouter from './routers/UserRouter';
 
 dotenv.config();
 
@@ -11,22 +14,26 @@ const app: Application = express();
 const DB: string = process.env.MONGO_URL || '';
 const PORT: number = Number(process.env.PORT) || 5000;
 
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+    optionsSuccessStatus: 200,
+  }),
+);
+app.use(express.json());
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: false }));
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
+app.use(wordRouter);
+app.use(statisticRouter);
+app.use(userRouter);
+
 (async () => {
-  mongoose.set('strictQuery', false);
   try {
-    await mongoose.connect(DB).then(() => console.log('Connected to DB'));
-    app.listen(process.env.PORT, () => console.log(`Server started on port ${process.env.PORT}`));
+    mongoose.set('strictQuery', false);
+    await mongoose.connect(DB);
+    app.listen(PORT, () => console.log(`Server started on port ${process.env.PORT}`));
   } catch (err) {
     console.log(err);
   }
 })();
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
-app.use(wordRoutes);
-app.use(statisticRoutes);
-
-app.listen(PORT, 'localhost', () => {
-  console.log(`Listening port ${PORT}...`);
-});
