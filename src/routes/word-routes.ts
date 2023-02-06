@@ -1,12 +1,12 @@
 import express from 'express';
-import { getWords, addWord, getWord, editWord, deleteWord } from '../controllers/word-controller';
+import wordController from '../controllers/word-controller';
 
 const router = express.Router();
 
-router.get('/api/words', getWords);
-router.post('/api/word', addWord);
-router.get('/api/word/:id', getWord);
-router.put('/api/word/:id', editWord);
-router.delete('/api/word/:id', deleteWord);
+router.get('/api/words', wordController.getWords);
+router.post('/api/word', wordController.addWord);
+router.get('/api/word/:id', wordController.getWord);
+router.put('/api/word/:id', wordController.editWord);
+router.delete('/api/word/:id', wordController.deleteWord);
 
 export default router;
