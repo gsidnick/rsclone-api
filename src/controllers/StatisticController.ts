@@ -4,7 +4,7 @@ import { Status } from '../constants/Status';
 import NotFoundError from '../errors/NotFoundError';
 
 class StatisticController {
-  async getStatistics(req: Request, res: Response, next: NextFunction) {
+  public async getStatistics(req: Request, res: Response, next: NextFunction) {
     try {
       const searchedStatistics = await Statistic.find();
       if (searchedStatistics === null) throw new NotFoundError('Statistics not found');
@@ -14,7 +14,7 @@ class StatisticController {
     }
   }
 
-  async getStatistic(req: Request, res: Response, next: NextFunction) {
+  public async getStatistic(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
       const searchedStatistic = await Statistic.findById(id);
@@ -25,7 +25,7 @@ class StatisticController {
     }
   }
 
-  async addStatistic(req: Request, res: Response, next: NextFunction) {
+  public async addStatistic(req: Request, res: Response, next: NextFunction) {
     try {
       const newStatistic = new Statistic(req.body);
       const savedStatistic = await newStatistic.save();
@@ -35,7 +35,7 @@ class StatisticController {
     }
   }
 
-  async editStatistic(req: Request, res: Response, next: NextFunction) {
+  public async editStatistic(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
       const { score, level } = req.body;
@@ -46,7 +46,7 @@ class StatisticController {
     }
   }
 
-  async deleteStatistic(req: Request, res: Response, next: NextFunction) {
+  public async deleteStatistic(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
       const deletedStatistic = await Statistic.findByIdAndDelete(id);

@@ -8,7 +8,7 @@ import NotFoundError from '../errors/NotFoundError';
 import UnauthorizedError from '../errors/UnauthorizedError';
 
 class UserService {
-  async registration(email: string, password: string): Promise<IUserData> {
+  public async registration(email: string, password: string): Promise<IUserData> {
     const searchedUser = await User.findOne({ email });
     if (searchedUser !== null) {
       throw new ConflictError('User with email address already exists');
@@ -31,7 +31,7 @@ class UserService {
     };
   }
 
-  async login(email: string, password: string): Promise<IUserData> {
+  public async login(email: string, password: string): Promise<IUserData> {
     const searchedUser = await User.findOne({ email });
     if (searchedUser === null) {
       throw new NotFoundError('User not found');

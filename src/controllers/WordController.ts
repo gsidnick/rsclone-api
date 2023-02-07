@@ -5,7 +5,7 @@ import { Status } from '../constants/Status';
 import NotFoundError from '../errors/NotFoundError';
 
 class WordController {
-  async getWords(req: Request, res: Response, next: NextFunction) {
+  public async getWords(req: Request, res: Response, next: NextFunction) {
     try {
       const searchedWords = await Word.find();
       if (searchedWords === null) throw new NotFoundError('Words not found');
@@ -15,7 +15,7 @@ class WordController {
     }
   }
 
-  async getWord(req: Request, res: Response, next: NextFunction) {
+  public async getWord(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
       const searchedWord = await Word.findById(id);
@@ -26,7 +26,7 @@ class WordController {
     }
   }
 
-  async addWord(req: Request, res: Response, next: NextFunction) {
+  public async addWord(req: Request, res: Response, next: NextFunction) {
     try {
       let translation = '';
       const { word } = req.body;
@@ -43,7 +43,7 @@ class WordController {
     }
   }
 
-  async editWord(req: Request, res: Response, next: NextFunction) {
+  public async editWord(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
       const { word, translation, learn } = req.body;
@@ -54,7 +54,7 @@ class WordController {
     }
   }
 
-  async deleteWord(req: Request, res: Response) {
+  public async deleteWord(req: Request, res: Response) {
     try {
       const { id } = req.params;
       const deletedWord = await Word.findByIdAndDelete(id);

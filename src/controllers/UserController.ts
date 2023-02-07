@@ -4,7 +4,7 @@ import IUserCredential from '../interfaces/IUserCredential';
 import userService from '../services/UserService';
 
 class UserController {
-  async registration(req: Request, res: Response, next: NextFunction) {
+  public async registration(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password }: IUserCredential = req.body;
       const userData: IUserData = await userService.registration(email, password);
@@ -15,7 +15,7 @@ class UserController {
     }
   }
 
-  async login(req: Request, res: Response, next: NextFunction) {
+  public async login(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password }: IUserCredential = req.body;
       const userData: IUserData = await userService.login(email, password);
@@ -26,21 +26,21 @@ class UserController {
     }
   }
 
-  async logout(req: Request, res: Response, next: NextFunction) {
+  public async logout(req: Request, res: Response, next: NextFunction) {
     try {
     } catch (error) {
       next(error);
     }
   }
 
-  async activate(req: Request, res: Response, next: NextFunction) {
+  public async activate(req: Request, res: Response, next: NextFunction) {
     try {
     } catch (error) {
       next(error);
     }
   }
 
-  async refresh(req: Request, res: Response, next: NextFunction) {
+  public async refresh(req: Request, res: Response, next: NextFunction) {
     try {
     } catch (error) {
       next(error);
