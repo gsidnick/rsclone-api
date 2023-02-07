@@ -1,22 +1,21 @@
-import bcrypt from 'bcrypt';
-import { v4 as uuidv4 } from 'uuid';
 import IUserData from '../interfaces/IUserData';
 import User from '../models/UserModel';
 import mailService from './MailService';
 import tokenService from './TokenService';
-
-const SALT_GEN = 10;
+import cryptoService from './CryptoService';
+import ConflictError from '../errors/ConflictError';
+import NotFoundError from '../errors/NotFoundError';
+import UnauthorizedError from '../errors/UnauthorizedError';
 
 class UserService {
-  async registration(email: string, password: string): Promise<IUserData> {
+  public async registration(email: string, password: string): Promise<IUserData> {
     const searchedUser = await User.findOne({ email });
     if (searchedUser !== null) {
-      throw new Error('User with email address already exists');
+      throw new ConflictError('User with email address already exists');
     }
 
-    const salt = await bcrypt.genSalt(SALT_GEN);
-    const passwordHash = await bcrypt.hash(password, salt);
-    const activationLink = uuidv4();
+    const passwordHash = await cryptoService.hashPassword(password);
+    const activationLink = cryptoService.generateUUID();
     const newUser = await User.create({ email, password: passwordHash, activationLink });
     await mailService.sendActivationCode(email, activationLink);
 
@@ -30,6 +29,33 @@ class UserService {
       refreshToken,
       user: payload,
     };
+  }
+
+  public async login(email: string, password: string): Promise<IUserData> {
+    const searchedUser = await User.findOne({ email });
+    if (searchedUser === null) {
+      throw new NotFoundError('User not found');
+    }
+
+    const isValidPassword = await cryptoService.checkPassword(password, searchedUser.password);
+    if (isValidPassword === false) {
+      throw new UnauthorizedError('Login or password incorrect');
+    }
+
+    const payload = { id: String(searchedUser._id), email: searchedUser.email, isActivated: searchedUser.isActivated };
+    const accessToken = tokenService.generateAccessToken(payload);
+    const refreshToken = tokenService.generateRefreshToken(payload);
+    await tokenService.saveToken(payload.id, refreshToken);
+
+    return {
+      accessToken,
+      refreshToken,
+      user: payload,
+    };
+  }
+
+  public async logout(refreshToken: string) {
+    return await tokenService.removeToken(refreshToken);
   }
 }
 
