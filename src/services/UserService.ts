@@ -4,6 +4,7 @@ import IUserData from '../interfaces/IUserData';
 import User from '../models/UserModel';
 import mailService from './MailService';
 import tokenService from './TokenService';
+import ConflictError from '../errors/ConflictError';
 
 const SALT_GEN = 10;
 
@@ -11,7 +12,7 @@ class UserService {
   async registration(email: string, password: string): Promise<IUserData> {
     const searchedUser = await User.findOne({ email });
     if (searchedUser !== null) {
-      throw new Error('User with email address already exists');
+      throw new ConflictError('User with email address already exists');
     }
 
     const salt = await bcrypt.genSalt(SALT_GEN);

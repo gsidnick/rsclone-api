@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import wordRouter from './routers/WordRouter';
 import statisticRouter from './routers/StatisticRouter';
 import userRouter from './routers/UserRouter';
+import errorHandler from './handlers/ErrorHandler';
 
 dotenv.config();
 const DB: string = process.env.MONGO_URL || '';
@@ -26,6 +27,7 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
 app.use(wordRouter);
 app.use(statisticRouter);
 app.use(userRouter);
+app.use(errorHandler);
 
 (async () => {
   try {
