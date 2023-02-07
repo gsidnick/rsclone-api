@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import IUserData from '../interfaces/IUserData';
 import IUserCredential from '../interfaces/IUserCredential';
 import userService from '../services/UserService';
+import { Status } from '../constants/Status';
 
 class UserController {
   public async registration(req: Request, res: Response, next: NextFunction) {
@@ -28,6 +29,10 @@ class UserController {
 
   public async logout(req: Request, res: Response, next: NextFunction) {
     try {
+      const { refreshToken } = req.cookies;
+      const token = await userService.logout(refreshToken);
+      res.clearCookie('refreshToken');
+      return res.status(Status.OK).json(token);
     } catch (error) {
       next(error);
     }

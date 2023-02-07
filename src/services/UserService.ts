@@ -53,6 +53,10 @@ class UserService {
       user: payload,
     };
   }
+
+  public async logout(refreshToken: string) {
+    return await tokenService.removeToken(refreshToken);
+  }
 }
 
 export default new UserService();
