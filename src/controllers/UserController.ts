@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import IUserData from '../interfaces/IUserData';
 import IUserCredential from '../interfaces/IUserCredential';
 import userService from '../services/UserService';
+import { Status } from '../constants/Status';
 
 class UserController {
   async registration(req: Request, res: Response) {
@@ -12,7 +13,7 @@ class UserController {
       return res.json(userData);
     } catch (error) {
       if (error instanceof Error) {
-        res.status(500).send(error.message);
+        res.status(Status.INTERNAL_SERVER_ERROR).send(error.message);
       }
     }
   }

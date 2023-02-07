@@ -1,16 +1,17 @@
 import { Request, Response } from 'express';
 import translate from 'google-translate-api-x';
 import Word from '../models/WordModel';
+import { Status } from '../constants/Status';
 
 class WordController {
   async getWords(req: Request, res: Response) {
     try {
       const searchedWords = await Word.find();
       if (searchedWords === null) throw new Error('Words not found');
-      res.status(200).json(searchedWords);
+      res.status(Status.OK).json(searchedWords);
     } catch (error) {
       if (error instanceof Error) {
-        res.status(500).send(error.message);
+        res.status(Status.INTERNAL_SERVER_ERROR).send(error.message);
       }
     }
   }
@@ -20,10 +21,10 @@ class WordController {
       const { id } = req.params;
       const searchedWord = await Word.findById(id);
       if (searchedWord === null) throw new Error('Word not found');
-      res.status(200).json(searchedWord);
+      res.status(Status.OK).json(searchedWord);
     } catch (error) {
       if (error instanceof Error) {
-        res.status(500).send(error.message);
+        res.status(Status.INTERNAL_SERVER_ERROR).send(error.message);
       }
     }
   }
@@ -40,10 +41,10 @@ class WordController {
       }
       const newWord = new Word({ word, translation });
       const savedWord = await newWord.save();
-      res.status(201).json(savedWord);
+      res.status(Status.CREATED).json(savedWord);
     } catch (error) {
       if (error instanceof Error) {
-        res.status(500).send(error.message);
+        res.status(Status.INTERNAL_SERVER_ERROR).send(error.message);
       }
     }
   }
@@ -53,10 +54,10 @@ class WordController {
       const { id } = req.params;
       const { word, translation, learn } = req.body;
       const editedWord = await Word.findByIdAndUpdate(id, { word, translation, learn }, { new: true });
-      res.status(200).json(editedWord);
+      res.status(Status.OK).json(editedWord);
     } catch (error) {
       if (error instanceof Error) {
-        res.status(500).send(error.message);
+        res.status(Status.INTERNAL_SERVER_ERROR).send(error.message);
       }
     }
   }
@@ -65,10 +66,10 @@ class WordController {
     try {
       const { id } = req.params;
       const deletedWord = await Word.findByIdAndDelete(id);
-      res.status(200).json(deletedWord);
+      res.status(Status.OK).json(deletedWord);
     } catch (error) {
       if (error instanceof Error) {
-        res.status(500).send(error.message);
+        res.status(Status.INTERNAL_SERVER_ERROR).send(error.message);
       }
     }
   }
