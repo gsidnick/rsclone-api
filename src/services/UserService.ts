@@ -1,5 +1,3 @@
-import bcrypt from 'bcrypt';
-import { v4 as uuidv4 } from 'uuid';
 import IUserData from '../interfaces/IUserData';
 import User from '../models/UserModel';
 import mailService from './MailService';
@@ -22,6 +20,29 @@ class UserService {
     await mailService.sendActivationCode(email, activationLink);
 
     const payload = { id: String(newUser._id), email: newUser.email, isActivated: newUser.isActivated };
+    const accessToken = tokenService.generateAccessToken(payload);
+    const refreshToken = tokenService.generateRefreshToken(payload);
+    await tokenService.saveToken(payload.id, refreshToken);
+
+    return {
+      accessToken,
+      refreshToken,
+      user: payload,
+    };
+  }
+
+  async login(email: string, password: string): Promise<IUserData> {
+    const searchedUser = await User.findOne({ email });
+    if (searchedUser === null) {
+      throw new NotFoundError('User not found');
+    }
+
+    const isValidPassword = await cryptoService.checkPassword(password, searchedUser.password);
+    if (isValidPassword === false) {
+      throw new UnauthorizedError('Login or password incorrect');
+    }
+
+    const payload = { id: String(searchedUser._id), email: searchedUser.email, isActivated: searchedUser.isActivated };
     const accessToken = tokenService.generateAccessToken(payload);
     const refreshToken = tokenService.generateRefreshToken(payload);
     await tokenService.saveToken(payload.id, refreshToken);
