@@ -4,9 +4,10 @@ import IUserData from '../interfaces/IUserData';
 import User from '../models/UserModel';
 import mailService from './MailService';
 import tokenService from './TokenService';
+import cryptoService from './CryptoService';
 import ConflictError from '../errors/ConflictError';
-
-const SALT_GEN = 10;
+import NotFoundError from '../errors/NotFoundError';
+import UnauthorizedError from '../errors/UnauthorizedError';
 
 class UserService {
   async registration(email: string, password: string): Promise<IUserData> {
@@ -15,9 +16,8 @@ class UserService {
       throw new ConflictError('User with email address already exists');
     }
 
-    const salt = await bcrypt.genSalt(SALT_GEN);
-    const passwordHash = await bcrypt.hash(password, salt);
-    const activationLink = uuidv4();
+    const passwordHash = await cryptoService.hashPassword(password);
+    const activationLink = cryptoService.generateUUID();
     const newUser = await User.create({ email, password: passwordHash, activationLink });
     await mailService.sendActivationCode(email, activationLink);
 
