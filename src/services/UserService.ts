@@ -1,4 +1,4 @@
-import IUserData from '../interfaces/IUserData';
+import IAuthResponse from '../interfaces/IAuthResponse';
 import User from '../models/UserModel';
 import mailService from './MailService';
 import tokenService from './TokenService';
@@ -9,7 +9,7 @@ import UnauthorizedError from '../errors/UnauthorizedError';
 import { JwtPayload } from 'jsonwebtoken';
 
 class UserService {
-  public async registration(email: string, password: string): Promise<IUserData> {
+  public async registration(email: string, password: string): Promise<IAuthResponse> {
     const searchedUser = await User.findOne({ email });
     if (searchedUser !== null) {
       throw new ConflictError('User with email address already exists');
@@ -31,7 +31,7 @@ class UserService {
     };
   }
 
-  public async login(email: string, password: string): Promise<IUserData> {
+  public async login(email: string, password: string): Promise<IAuthResponse> {
     const searchedUser = await User.findOne({ email });
     if (searchedUser === null) {
       throw new NotFoundError('User not found');
@@ -58,7 +58,7 @@ class UserService {
     return await tokenService.removeToken(refreshToken);
   }
 
-  public async refresh(refreshToken: string): Promise<IUserData> {
+  public async refresh(refreshToken: string): Promise<IAuthResponse> {
     if (refreshToken != null) throw new UnauthorizedError('User is not logged in');
 
     const isExists = await tokenService.isExist(refreshToken);
