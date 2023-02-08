@@ -6,6 +6,7 @@ import cryptoService from './CryptoService';
 import ConflictError from '../errors/ConflictError';
 import NotFoundError from '../errors/NotFoundError';
 import UnauthorizedError from '../errors/UnauthorizedError';
+import { JwtPayload } from 'jsonwebtoken';
 
 class UserService {
   public async registration(email: string, password: string): Promise<IUserData> {
@@ -18,7 +19,6 @@ class UserService {
     const activationLink = cryptoService.generateUUID();
     const newUser = await User.create({ email, password: passwordHash, activationLink });
     await mailService.sendActivationCode(email, activationLink);
-
     const payload = { id: String(newUser._id), email: newUser.email, isActivated: newUser.isActivated };
     const accessToken = tokenService.generateAccessToken(payload);
     const refreshToken = tokenService.generateRefreshToken(payload);
@@ -56,6 +56,30 @@ class UserService {
 
   public async logout(refreshToken: string) {
     return await tokenService.removeToken(refreshToken);
+  }
+
+  public async refresh(refreshToken: string): Promise<IUserData> {
+    if (refreshToken != null) throw new UnauthorizedError('User is not logged in');
+
+    const isExists = await tokenService.isExist(refreshToken);
+    if (isExists === false) throw new UnauthorizedError('User is not logged in');
+
+    const tokenData = tokenService.verifyRefreshToken(refreshToken) as JwtPayload;
+    const searchedUser = await User.findById(tokenData.id);
+    if (searchedUser === null) {
+      throw new NotFoundError('User not found');
+    }
+
+    const payload = { id: String(searchedUser._id), email: searchedUser.email, isActivated: searchedUser.isActivated };
+    const accessToken = tokenService.generateAccessToken(payload);
+    const newRefreshToken = tokenService.generateRefreshToken(payload);
+    await tokenService.saveToken(payload.id, newRefreshToken);
+
+    return {
+      accessToken,
+      refreshToken: newRefreshToken,
+      user: payload,
+    };
   }
 }
 
