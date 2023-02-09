@@ -3,6 +3,10 @@ const Schema = mongoose.Schema;
 
 const statisticSchema = new Schema(
   {
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
     score: {
       type: Number,
       default: 0,
