@@ -6,7 +6,7 @@ import cryptoService from './CryptoService';
 import ConflictError from '../errors/ConflictError';
 import NotFoundError from '../errors/NotFoundError';
 import UnauthorizedError from '../errors/UnauthorizedError';
-import { JwtPayload } from 'jsonwebtoken';
+import IUser from '../interfaces/IUser';
 
 class UserService {
   public async registration(email: string, password: string): Promise<IAuthResponse> {
@@ -59,18 +59,21 @@ class UserService {
   }
 
   public async refresh(refreshToken: string): Promise<IAuthResponse> {
-    if (refreshToken != null) throw new UnauthorizedError('User is not logged in');
-
+    if (refreshToken === undefined) throw new UnauthorizedError('User is not logged in');
     const isExists = await tokenService.isExist(refreshToken);
     if (isExists === false) throw new UnauthorizedError('User is not logged in');
 
-    const tokenData = tokenService.verifyRefreshToken(refreshToken) as JwtPayload;
-    const searchedUser = await User.findById(tokenData.id);
-    if (searchedUser === null) {
-      throw new NotFoundError('User not found');
-    }
+    const tokenData = tokenService.verifyRefreshToken(refreshToken);
+    if (tokenData === null || typeof tokenData === 'string') throw new UnauthorizedError('User is not logged in');
 
-    const payload = { id: String(searchedUser._id), email: searchedUser.email, isActivated: searchedUser.isActivated };
+    const searchedUser = await User.findById(tokenData.id);
+    if (searchedUser === null) throw new NotFoundError('User not found');
+
+    const payload: IUser = {
+      id: String(searchedUser._id),
+      email: searchedUser.email,
+      isActivated: searchedUser.isActivated,
+    };
     const accessToken = tokenService.generateAccessToken(payload);
     const newRefreshToken = tokenService.generateRefreshToken(payload);
     await tokenService.saveToken(payload.id, newRefreshToken);
