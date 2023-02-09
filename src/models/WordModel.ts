@@ -3,6 +3,10 @@ const Schema = mongoose.Schema;
 
 const wordSchema = new Schema(
   {
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
     word: {
       type: String,
       required: true,

@@ -1,1 +1,1 @@
-export type Payload = string | Buffer | {};
+export type Payload = string | Buffer | object;

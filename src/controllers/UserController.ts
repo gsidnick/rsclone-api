@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import IUserData from '../interfaces/IUserData';
+import IAuthResponse from '../interfaces/IAuthResponse';
 import IUserCredential from '../interfaces/IUserCredential';
 import userService from '../services/UserService';
 import { Status } from '../constants/Status';
@@ -8,7 +8,7 @@ class UserController {
   public async registration(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password }: IUserCredential = req.body;
-      const userData: IUserData = await userService.registration(email, password);
+      const userData: IAuthResponse = await userService.registration(email, password);
       res.cookie('refreshToken', userData.refreshToken, { maxAge: 864000000, httpOnly: true });
       return res.json(userData);
     } catch (error) {
@@ -19,7 +19,7 @@ class UserController {
   public async login(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password }: IUserCredential = req.body;
-      const userData: IUserData = await userService.login(email, password);
+      const userData: IAuthResponse = await userService.login(email, password);
       res.cookie('refreshToken', userData.refreshToken, { maxAge: 864000000, httpOnly: true });
       return res.json(userData);
     } catch (error) {
@@ -47,6 +47,10 @@ class UserController {
 
   public async refresh(req: Request, res: Response, next: NextFunction) {
     try {
+      const { refreshToken } = req.cookies;
+      const userData: IAuthResponse = await userService.refresh(refreshToken);
+      res.cookie('refreshToken', userData.refreshToken, { maxAge: 864000000, httpOnly: true });
+      return res.json(userData);
     } catch (error) {
       next(error);
     }
