@@ -7,7 +7,8 @@ import NotFoundError from '../errors/NotFoundError';
 class WordController {
   public async getWords(req: Request, res: Response, next: NextFunction) {
     try {
-      const searchedWords = await Word.find();
+      const userID = req.user.id;
+      const searchedWords = await Word.find({ user: userID });
       if (searchedWords === null) throw new NotFoundError('Words not found');
       res.status(Status.OK).json(searchedWords);
     } catch (error) {
@@ -17,8 +18,9 @@ class WordController {
 
   public async getWord(req: Request, res: Response, next: NextFunction) {
     try {
-      const { id } = req.params;
-      const searchedWord = await Word.findById(id);
+      const wordID = req.params.id;
+      const userID = req.user.id;
+      const searchedWord = await Word.find({ _id: wordID, user: userID });
       if (searchedWord === null) throw new NotFoundError('Word not found');
       res.status(Status.OK).json(searchedWord);
     } catch (error) {
@@ -30,12 +32,13 @@ class WordController {
     try {
       let translation = '';
       const { word } = req.body;
+      const userID = req.user.id;
       if (word.trim() === '') throw new NotFoundError('Nothing to translate');
       const result = await translate(word, { to: 'en' });
       if ('text' in result) {
         translation = String(result.text);
       }
-      const newWord = new Word({ word, translation });
+      const newWord = new Word({ user: userID, word, translation });
       const savedWord = await newWord.save();
       res.status(Status.CREATED).json(savedWord);
     } catch (error) {
