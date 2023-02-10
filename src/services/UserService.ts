@@ -9,7 +9,7 @@ import UnauthorizedError from '../errors/UnauthorizedError';
 import IUser from '../interfaces/IUser';
 
 class UserService {
-  public async registration(email: string, password: string): Promise<IAuthResponse> {
+  public async registration(name: string, email: string, password: string): Promise<IAuthResponse> {
     const searchedUser = await User.findOne({ email });
     if (searchedUser !== null) {
       throw new ConflictError('User with email address already exists');
@@ -17,9 +17,14 @@ class UserService {
 
     const passwordHash = await cryptoService.hashPassword(password);
     const activationLink = cryptoService.generateUUID();
-    const newUser = await User.create({ email, password: passwordHash, activationLink });
+    const newUser = await User.create({ name, email, password: passwordHash, activationLink });
     await mailService.sendActivationCode(email, activationLink);
-    const payload = { id: String(newUser._id), email: newUser.email, isActivated: newUser.isActivated };
+    const payload = {
+      id: String(newUser._id),
+      name: newUser.name,
+      email: newUser.email,
+      isActivated: newUser.isActivated,
+    };
     const accessToken = tokenService.generateAccessToken(payload);
     const refreshToken = tokenService.generateRefreshToken(payload);
     await tokenService.saveToken(payload.id, refreshToken);
@@ -42,7 +47,12 @@ class UserService {
       throw new UnauthorizedError('Login or password incorrect');
     }
 
-    const payload = { id: String(searchedUser._id), email: searchedUser.email, isActivated: searchedUser.isActivated };
+    const payload = {
+      id: String(searchedUser._id),
+      name: searchedUser.name,
+      email: searchedUser.email,
+      isActivated: searchedUser.isActivated,
+    };
     const accessToken = tokenService.generateAccessToken(payload);
     const refreshToken = tokenService.generateRefreshToken(payload);
     await tokenService.saveToken(payload.id, refreshToken);
@@ -71,6 +81,7 @@ class UserService {
 
     const payload: IUser = {
       id: String(searchedUser._id),
+      name: searchedUser.name,
       email: searchedUser.email,
       isActivated: searchedUser.isActivated,
     };
