@@ -7,8 +7,8 @@ import { Status } from '../constants/Status';
 class UserController {
   public async registration(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password }: IUserCredential = req.body;
-      const userData: IAuthResponse = await userService.registration(email, password);
+      const { name, email, password }: IUserCredential = req.body;
+      const userData: IAuthResponse = await userService.registration(name, email, password);
       res.cookie('refreshToken', userData.refreshToken, { maxAge: 864000000, httpOnly: true });
       return res.json(userData);
     } catch (error) {

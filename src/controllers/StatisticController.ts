@@ -6,7 +6,8 @@ import NotFoundError from '../errors/NotFoundError';
 class StatisticController {
   public async getStatistics(req: Request, res: Response, next: NextFunction) {
     try {
-      const searchedStatistics = await Statistic.find();
+      const userID = req.user.id;
+      const searchedStatistics = await Statistic.find({ user: userID });
       if (searchedStatistics === null) throw new NotFoundError('Statistics not found');
       res.status(Status.OK).json(searchedStatistics);
     } catch (error) {
@@ -27,7 +28,9 @@ class StatisticController {
 
   public async addStatistic(req: Request, res: Response, next: NextFunction) {
     try {
-      const newStatistic = new Statistic(req.body);
+      const userID = req.user.id;
+      const data = { user: userID, ...req.body };
+      const newStatistic = new Statistic(data);
       const savedStatistic = await newStatistic.save();
       res.status(Status.CREATED).json(savedStatistic);
     } catch (error) {
