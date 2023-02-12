@@ -5,10 +5,10 @@ import userService from '../services/UserService';
 import { Status } from '../constants/Status';
 
 class UserController {
-  public async registration(req: Request, res: Response, next: NextFunction) {
+  public async signup(req: Request, res: Response, next: NextFunction) {
     try {
       const { name, email, password }: IUserCredential = req.body;
-      const userData: IAuthResponse = await userService.registration(name, email, password);
+      const userData: IAuthResponse = await userService.signup(name, email, password);
       res.cookie('refreshToken', userData.refreshToken, { maxAge: 864000000, httpOnly: true });
       return res.json(userData);
     } catch (error) {

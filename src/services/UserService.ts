@@ -9,7 +9,7 @@ import UnauthorizedError from '../errors/UnauthorizedError';
 import IUser from '../interfaces/IUser';
 
 class UserService {
-  public async registration(name: string, email: string, password: string): Promise<IAuthResponse> {
+  public async signup(name: string, email: string, password: string): Promise<IAuthResponse> {
     const searchedUser = await User.findOne({ email });
     if (searchedUser !== null) {
       throw new ConflictError('User with email address already exists');

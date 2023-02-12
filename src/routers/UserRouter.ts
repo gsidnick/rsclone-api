@@ -3,7 +3,7 @@ import userController from '../controllers/UserController';
 
 const UserRouter = express.Router();
 
-UserRouter.post('/api/registration', userController.registration);
+UserRouter.post('/api/signup', userController.signup);
 UserRouter.post('/api/login', userController.login);
 UserRouter.post('/api/logout', userController.logout);
 UserRouter.get('/api/activate/:link', userController.activate);
