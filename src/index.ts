@@ -4,7 +4,6 @@ import mongoose from 'mongoose';
 import morgan from 'morgan';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import cookieSession from 'cookie-session';
 import wordRouter from './routers/WordRouter';
 import statisticRouter from './routers/StatisticRouter';
 import userRouter from './routers/UserRouter';
@@ -17,20 +16,11 @@ const app: Application = express();
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
-    optionsSuccessStatus: 200,
+    origin: ['http://localhost:3000', 'http://127.0.0.1:3000', 'https://rsclone-reactors.netlify.app'],
     credentials: true,
   }),
 );
 app.use(cookieParser());
-app.use(
-  cookieSession({
-    secret: process.env.COOKIE_SECRET_KEY,
-    sameSite: 'none',
-    secure: false,
-    httpOnly: true,
-  }),
-);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));

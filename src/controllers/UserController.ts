@@ -20,7 +20,13 @@ class UserController {
     try {
       const { email, password }: IUserCredential = req.body;
       const userData: IAuthResponse = await userService.login(email, password);
-      res.cookie('refreshToken', userData.refreshToken, { maxAge: 864000000, httpOnly: true });
+      res.cookie('refreshToken', userData.refreshToken, {
+        maxAge: 864000000,
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true,
+      });
+      console.log(res.cookie);
       return res.json(userData);
     } catch (error) {
       next(error);
