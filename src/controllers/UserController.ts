@@ -1,15 +1,24 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, CookieOptions } from 'express';
 import IAuthResponse from '../interfaces/IAuthResponse';
 import IUserCredential from '../interfaces/IUserCredential';
 import userService from '../services/UserService';
 import { Status } from '../constants/Status';
+
+const REFRESH_TOKEN_NAME = '_token';
+const REFRESH_TOKEN_MAX_AGE = 10 * 24 * 60 * 60 * 1000;
+const REFRESH_TOKEN_OPTIONS: CookieOptions = {
+  maxAge: REFRESH_TOKEN_MAX_AGE,
+  httpOnly: true,
+  secure: true,
+  sameSite: 'none',
+};
 
 class UserController {
   public async signup(req: Request, res: Response, next: NextFunction) {
     try {
       const { name, email, password }: IUserCredential = req.body;
       const userData: IAuthResponse = await userService.signup(name, email, password);
-      res.cookie('refreshToken', userData.refreshToken, { maxAge: 864000000, httpOnly: true });
+      res.cookie(REFRESH_TOKEN_NAME, userData.refreshToken, REFRESH_TOKEN_OPTIONS);
       return res.json(userData);
     } catch (error) {
       next(error);
@@ -20,12 +29,7 @@ class UserController {
     try {
       const { email, password }: IUserCredential = req.body;
       const userData: IAuthResponse = await userService.login(email, password);
-      res.cookie('refreshToken', userData.refreshToken, {
-        maxAge: 864000000,
-        httpOnly: true,
-        sameSite: 'none',
-        secure: true,
-      });
+      res.cookie(REFRESH_TOKEN_NAME, userData.refreshToken, REFRESH_TOKEN_OPTIONS);
       console.log(res.cookie);
       return res.json(userData);
     } catch (error) {
@@ -37,7 +41,7 @@ class UserController {
     try {
       const { refreshToken } = req.cookies;
       const token = await userService.logout(refreshToken);
-      res.clearCookie('refreshToken');
+      res.clearCookie(REFRESH_TOKEN_NAME);
       return res.status(Status.OK).json(token);
     } catch (error) {
       next(error);
@@ -55,7 +59,7 @@ class UserController {
     try {
       const { refreshToken } = req.cookies;
       const userData: IAuthResponse = await userService.refresh(refreshToken);
-      res.cookie('refreshToken', userData.refreshToken, { maxAge: 864000000, httpOnly: true });
+      res.cookie(REFRESH_TOKEN_NAME, userData.refreshToken, REFRESH_TOKEN_OPTIONS);
       return res.json(userData);
     } catch (error) {
       next(error);
