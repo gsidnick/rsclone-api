@@ -30,18 +30,19 @@ class WordController {
 
   public async addWord(req: Request, res: Response, next: NextFunction) {
     try {
-      let translation = '';
+      let translation = req.body.word;
       const { word } = req.body;
       const userID = req.user.id;
       if (word.trim() === '') throw new NotFoundError('Nothing to translate');
-      const result = await translate(word, { to: 'en' });
-      if ('text' in result) {
-        translation = String(result.text);
-      }
+      // const result = await translate(word, { to: 'en' });
+      // if ('text' in result) {
+      //   translation = String(result.text);
+      // }
       const newWord = new Word({ user: userID, word, translation });
       const savedWord = await newWord.save();
       res.status(Status.CREATED).json(savedWord);
     } catch (error) {
+      console.error(error);
       next(error);
     }
   }
