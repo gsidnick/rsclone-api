@@ -4,7 +4,7 @@ import IUserCredential from '../interfaces/IUserCredential';
 import userService from '../services/UserService';
 import { Status } from '../constants/Status';
 
-const REFRESH_TOKEN_NAME = '_token';
+const REFRESH_TOKEN_NAME = 'refreshToken';
 const REFRESH_TOKEN_MAX_AGE = 10 * 24 * 60 * 60 * 1000;
 const REFRESH_TOKEN_OPTIONS: CookieOptions = {
   maxAge: REFRESH_TOKEN_MAX_AGE,
@@ -30,7 +30,6 @@ class UserController {
       const { email, password }: IUserCredential = req.body;
       const userData: IAuthResponse = await userService.login(email, password);
       res.cookie(REFRESH_TOKEN_NAME, userData.refreshToken, REFRESH_TOKEN_OPTIONS);
-      console.log(res.cookie);
       return res.json(userData);
     } catch (error) {
       next(error);
