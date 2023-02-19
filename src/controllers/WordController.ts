@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-import translate from 'google-translate-api-x';
 import Word from '../models/WordModel';
 import { Status } from '../constants/Status';
 import NotFoundError from '../errors/NotFoundError';
