@@ -30,7 +30,7 @@ class StatisticController {
     try {
       const userID = req.user.id;
       const { score, level } = req.body;
-      const editedStatistic = await Statistic.updateOne({ user: userID }, { score, level });
+      const editedStatistic = await Statistic.findOneAndUpdate({ user: userID }, { score, level });
       res.status(Status.OK).json(editedStatistic);
     } catch (error) {
       next(error);
@@ -40,7 +40,7 @@ class StatisticController {
   public async deleteStatistic(req: Request, res: Response, next: NextFunction) {
     try {
       const userID = req.user.id;
-      const deletedStatistic = await Statistic.deleteOne({ user: userID });
+      const deletedStatistic = await Statistic.findOneAndDelete({ user: userID });
       res.status(Status.OK).json(deletedStatistic);
     } catch (error) {
       next(error);
