@@ -7,7 +7,7 @@ class StatisticController {
   public async getStatistic(req: Request, res: Response, next: NextFunction) {
     try {
       const userID = req.user.id;
-      const searchedStatistics = await Statistic.find({ user: userID });
+      const searchedStatistics = await Statistic.findOne({ user: userID });
       if (searchedStatistics === null) throw new NotFoundError('Statistics not found');
       res.status(Status.OK).json(searchedStatistics);
     } catch (error) {
