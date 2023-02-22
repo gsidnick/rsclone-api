@@ -19,7 +19,7 @@ class WordController {
     try {
       const wordID = req.params.id;
       const userID = req.user.id;
-      const searchedWord = await Word.find({ _id: wordID, user: userID });
+      const searchedWord = await Word.findOne({ _id: wordID, user: userID });
       if (searchedWord === null) throw new NotFoundError('Word not found');
       res.status(Status.OK).json(searchedWord);
     } catch (error) {
