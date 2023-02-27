@@ -5,12 +5,12 @@ import tokenModel from '../models/TokenModel';
 class TokenService {
   public generateAccessToken(payload: Payload): string {
     const secret = process.env.ACCESS_SECRET_KEY as Secret;
-    return jwt.sign(payload, secret, { expiresIn: '24h' });
+    return jwt.sign(payload, secret, { expiresIn: '10d' });
   }
 
   public generateRefreshToken(payload: Payload): string {
     const secret = process.env.REFRESH_SECRET_KEY as Secret;
-    return jwt.sign(payload, secret, { expiresIn: '10d' });
+    return jwt.sign(payload, secret, { expiresIn: '30d' });
   }
 
   public verifyAccessToken(token: string) {

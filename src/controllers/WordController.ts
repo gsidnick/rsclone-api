@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-import translate from 'google-translate-api-x';
 import Word from '../models/WordModel';
 import { Status } from '../constants/Status';
 import NotFoundError from '../errors/NotFoundError';
@@ -20,7 +19,7 @@ class WordController {
     try {
       const wordID = req.params.id;
       const userID = req.user.id;
-      const searchedWord = await Word.find({ _id: wordID, user: userID });
+      const searchedWord = await Word.findOne({ _id: wordID, user: userID });
       if (searchedWord === null) throw new NotFoundError('Word not found');
       res.status(Status.OK).json(searchedWord);
     } catch (error) {
@@ -30,18 +29,13 @@ class WordController {
 
   public async addWord(req: Request, res: Response, next: NextFunction) {
     try {
-      let translation = '';
-      const { word } = req.body;
+      const { word, translation } = req.body;
       const userID = req.user.id;
-      if (word.trim() === '') throw new NotFoundError('Nothing to translate');
-      const result = await translate(word, { to: 'en' });
-      if ('text' in result) {
-        translation = String(result.text);
-      }
       const newWord = new Word({ user: userID, word, translation });
       const savedWord = await newWord.save();
       res.status(Status.CREATED).json(savedWord);
     } catch (error) {
+      console.error(error);
       next(error);
     }
   }

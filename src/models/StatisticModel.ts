@@ -13,7 +13,7 @@ const statisticSchema = new Schema(
     },
     level: {
       type: Number,
-      default: 0,
+      default: 1,
     },
   },
   {

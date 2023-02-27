@@ -7,6 +7,7 @@ import ConflictError from '../errors/ConflictError';
 import NotFoundError from '../errors/NotFoundError';
 import UnauthorizedError from '../errors/UnauthorizedError';
 import IUser from '../interfaces/IUser';
+import Statistic from '../models/StatisticModel';
 
 class UserService {
   public async signup(name: string, email: string, password: string): Promise<IAuthResponse> {
@@ -18,6 +19,8 @@ class UserService {
     const passwordHash = await cryptoService.hashPassword(password);
     const activationLink = cryptoService.generateUUID();
     const newUser = await User.create({ name, email, password: passwordHash, activationLink });
+    const newStatistic = new Statistic({ user: newUser._id });
+    const savedStatistic = await newStatistic.save();
     await mailService.sendActivationCode(email, activationLink);
     const payload = {
       id: String(newUser._id),
